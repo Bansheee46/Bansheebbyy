@@ -125,33 +125,7 @@ body {
 
 /* ---------- Live pen-nib ---------- */
 #pen {
-  position: fixed;
-  left: 0;
-  top: 0;
-  width: 16px;
-  height: 16px;
-  margin: -8px 0 0 -8px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 35% 32%, #5b5b61, #1d1d1f 72%);
-  box-shadow: 0 0 14px 5px rgba(29, 29, 31, 0.22);
-  opacity: 0;
-  transition: opacity 0.35s ease;
-  pointer-events: none;
-  z-index: 10000;
-  mix-blend-mode: multiply;
-}
-#pen::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 2px;
-  height: 26px;
-  margin: -3px 0 0 -1px;
-  background: linear-gradient(to bottom, rgba(29, 29, 31, 0), rgba(29, 29, 31, 0.55));
-  transform: rotate(38deg);
-  transform-origin: top center;
-  border-radius: 2px;
+  display: none;
 }
 
 /* ---------- macOS window (the site) ---------- */

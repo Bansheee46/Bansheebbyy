@@ -9,69 +9,11 @@ interface Props {
 export default function Preloader({ onDone }: Props) {
   const [writing, setWriting] = useState(true);
   const [done, setDone] = useState(false);
-  const penRef = useRef<HTMLDivElement>(null);
   const replayRef = useRef<HTMLButtonElement>(null);
   const vivusRef = useRef<Vivus | null>(null);
   const apiRef = useRef<{ replay: () => void } | null>(null);
 
   useEffect(() => {
-    let raf = 0;
-    let running = false;
-
-    const positionPen = () => {
-      const svg = document.getElementById("handwrite") as SVGSVGElement | null;
-      const pen = penRef.current;
-      if (!svg || !pen) return;
-      const paths = svg.querySelectorAll("path");
-      const tipHolder: { point: DOMPoint | null; pathEl: SVGPathElement | null } = { point: null, pathEl: null };
-      let active = false;
-      paths.forEach((el) => {
-        const p = el as unknown as SVGPathElement;
-        const total = p.getTotalLength();
-        if (!total) return;
-        const off = parseFloat(p.style.strokeDashoffset);
-        const drawn = total - (isNaN(off) ? 0 : off);
-        if (drawn > 1 && drawn < total - 1) {
-          tipHolder.point = p.getPointAtLength(drawn);
-          tipHolder.pathEl = p;
-          active = true;
-        } else if (drawn >= total - 1 && !tipHolder.point) {
-          tipHolder.point = p.getPointAtLength(total);
-          tipHolder.pathEl = p;
-        }
-      });
-      if (tipHolder.point && tipHolder.pathEl) {
-        const ctm = tipHolder.pathEl.getScreenCTM();
-        if (ctm) {
-          const pt = svg.createSVGPoint();
-          pt.x = tipHolder.point.x;
-          pt.y = tipHolder.point.y;
-          const s = pt.matrixTransform(ctm);
-          pen.style.left = `${s.x}px`;
-          pen.style.top = `${s.y}px`;
-        }
-        pen.style.opacity = active ? "1" : "0";
-      } else {
-        pen.style.opacity = "0";
-      }
-    };
-
-    const frame = () => {
-      positionPen();
-      if (vivusRef.current && vivusRef.current.getStatus() === "end") {
-        if (penRef.current) penRef.current.style.opacity = "0";
-        running = false;
-        return;
-      }
-      raf = requestAnimationFrame(frame);
-    };
-
-    const startLoop = () => {
-      if (running) return;
-      running = true;
-      raf = requestAnimationFrame(frame);
-    };
-
     const finish = () => {
       setTimeout(() => {
         setWriting(false);
@@ -93,22 +35,18 @@ export default function Preloader({ onDone }: Props) {
       },
       finish
     );
-    startLoop();
 
     apiRef.current = {
       replay: () => {
         setDone(false);
         setWriting(false);
         replayRef.current?.classList.remove("show");
-        if (penRef.current) penRef.current.style.opacity = "1";
         vivusRef.current?.reset();
         vivusRef.current?.play(1, finish);
-        startLoop();
       }
     };
 
     return () => {
-      cancelAnimationFrame(raf);
       vivusRef.current?.destroy();
     };
   }, [onDone]);
@@ -133,7 +71,6 @@ export default function Preloader({ onDone }: Props) {
       >
         Replay
       </button>
-      <div id="pen" ref={penRef} />
     </>
   );
 }
