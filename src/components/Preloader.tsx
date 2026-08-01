@@ -19,13 +19,11 @@ export default function Preloader({ onDone }: Props) {
     let running = false;
 
     const positionPen = () => {
-      // SVG geometry typings vary across lib versions; the runtime API is stable.
-      const svg = document.getElementById("handwrite") as unknown as SVGSVGElement | null;
+      const svg = document.getElementById("handwrite") as SVGSVGElement | null;
       const pen = penRef.current;
       if (!svg || !pen) return;
       const paths = svg.querySelectorAll("path");
-      let tip: any = null;
-      let tipPath: any = null;
+      const tipHolder: { point: DOMPoint | null; pathEl: SVGPathElement | null } = { point: null, pathEl: null };
       let active = false;
       paths.forEach((el) => {
         const p = el as unknown as SVGPathElement;
@@ -34,20 +32,20 @@ export default function Preloader({ onDone }: Props) {
         const off = parseFloat(p.style.strokeDashoffset);
         const drawn = total - (isNaN(off) ? 0 : off);
         if (drawn > 1 && drawn < total - 1) {
-          tip = p.getPointAtLength(drawn);
-          tipPath = p;
+          tipHolder.point = p.getPointAtLength(drawn);
+          tipHolder.pathEl = p;
           active = true;
-        } else if (drawn >= total - 1 && !tip) {
-          tip = p.getPointAtLength(total);
-          tipPath = p;
+        } else if (drawn >= total - 1 && !tipHolder.point) {
+          tipHolder.point = p.getPointAtLength(total);
+          tipHolder.pathEl = p;
         }
       });
-      if (tip && tipPath) {
-        const ctm = tipPath.getScreenCTM();
+      if (tipHolder.point && tipHolder.pathEl) {
+        const ctm = tipHolder.pathEl.getScreenCTM();
         if (ctm) {
           const pt = svg.createSVGPoint();
-          pt.x = tip.x;
-          pt.y = tip.y;
+          pt.x = tipHolder.point.x;
+          pt.y = tipHolder.point.y;
           const s = pt.matrixTransform(ctm);
           pen.style.left = `${s.x}px`;
           pen.style.top = `${s.y}px`;

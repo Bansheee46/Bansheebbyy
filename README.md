@@ -1,32 +1,59 @@
-# React + TypeScript + Vite
+# Bansheebbyy — студия уютных интерфейсов
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+macOS-стилизованный портфолио-сайт с эффектом «джинни», печатающим терминалом и рукописным прелоадером.
 
-Currently, two official plugins are available:
+## Технологии
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- **React 19** + **TypeScript 6**
+- **Vite 8** — сборка и dev-сервер
+- **Tailwind CSS 4** — стили
+- **Motion** (Framer Motion) — анимации окон
+- **Vivus** — SVG-анимация рукописного текста
+- **html-to-image** — DOM-to-canvas для эффекта джинни
 
-## React Compiler
+## Структура
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```
+src/
+├── components/
+│   ├── ErrorBoundary.tsx      # Обработчик ошибок React
+│   ├── GenieWindow.tsx        # macOS genie-эффект (Canvas 2D)
+│   ├── MacWindow.tsx          # Шапка окна macOS
+│   ├── Preloader.tsx          # Рукописный SVG-прелоадер
+│   └── ui/
+│       ├── CursorIcon.tsx     # SVG-курсор
+│       ├── SyntaxHighlightedText.tsx
+│       └── terminal.tsx       # Печатающий терминал
+├── hooks/
+│   ├── useAudio.ts            # Звуки клавиатуры (Web Audio API)
+│   └── useInView.ts           # IntersectionObserver hook
+├── lib/
+│   ├── genie-math.ts          # Математика анимаций (lerp, easing)
+│   ├── genie-renderer.ts      # Canvas-рендер genie-эффекта
+│   ├── tokenizer.ts           # Bash-токенизатор
+│   └── utils.ts               # cn() utility
+├── App.tsx
+├── main.tsx
+├── index.css
+└── site.css
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## Запуск
+
+```bash
+npm install
+npm run dev
+```
+
+## Команды
+
+| Команда | Описание |
+|---------|----------|
+| `npm run dev` | Dev-сервер с HMR |
+| `npm run build` | Production-сборка (tsc + vite build) |
+| `npm run preview` | Предпросмотр сборки |
+| `npm run lint` | Oxlint |
+
+## Лицензия
+
+MIT
