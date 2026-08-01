@@ -116,6 +116,10 @@ export default function Preloader({ onDone }: Props) {
   return (
     <>
       <div id="preloader" className={`${writing ? "writing" : ""} ${done ? "done" : ""}`}>
+        {/*
+          Safe: handwriteSvg is a static asset imported via Vite ?raw at build time.
+          Never accept user-provided content here.
+        */}
         <div id="stage" dangerouslySetInnerHTML={{ __html: handwriteSvg }} />
         <div className="caption">
           Loading<span className="dots" />

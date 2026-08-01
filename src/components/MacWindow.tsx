@@ -14,7 +14,7 @@ export default function MacWindow() {
       );
     };
     update();
-    const t = window.setInterval(update, 1000 * 10);
+    const t = window.setInterval(update, 1000 * 60);
     return () => clearInterval(t);
   }, []);
 
