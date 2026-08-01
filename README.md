@@ -8,7 +8,7 @@ macOS-стилизованный портфолио-сайт с эффектом
 - **Vite 8** — сборка и dev-сервер
 - **Tailwind CSS 4** — стили
 - **Motion** (Framer Motion) — анимации окон
-- **Vivus** — SVG-анимация рукописного текста
+- **CSS stroke-dasharray** — рукописная анимация прелоадера
 - **html-to-image** — DOM-to-canvas для эффекта джинни
 
 ## Структура
@@ -53,6 +53,8 @@ npm run dev
 | `npm run build` | Production-сборка (tsc + vite build) |
 | `npm run preview` | Предпросмотр сборки |
 | `npm run lint` | Oxlint |
+| `npm run test` | Vitest (run once) |
+| `npm run test:watch` | Vitest (watch mode) |
 
 ## Лицензия
 

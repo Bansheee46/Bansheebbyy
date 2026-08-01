@@ -123,11 +123,6 @@ body {
   transform: none;
 }
 
-/* ---------- Live pen-nib ---------- */
-#pen {
-  display: none;
-}
-
 /* ---------- macOS window (the site) ---------- */
 .window {
   position: relative;

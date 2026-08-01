@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import Vivus from "vivus";
 import handwriteSvg from "@/assets/handwrite.svg?raw";
 
 interface Props {
@@ -9,65 +8,99 @@ interface Props {
 export default function Preloader({ onDone }: Props) {
   const [writing, setWriting] = useState(true);
   const [done, setDone] = useState(false);
-  const replayRef = useRef<HTMLButtonElement>(null);
-  const vivusRef = useRef<Vivus | null>(null);
-  const apiRef = useRef<{ replay: () => void } | null>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const finish = () => {
-      setTimeout(() => {
-        setWriting(false);
-        setDone(true);
-        replayRef.current?.classList.add("show");
-        onDone();
-      }, 450);
-    };
+    const paths = stageRef.current?.querySelectorAll<SVGPathElement>("path.letter");
+    if (!paths?.length) return;
 
-    vivusRef.current = new Vivus(
-      "handwrite",
-      {
-        type: "oneByOne",
-        duration: 190,
-        animTimingFunction: Vivus.EASE,
-        pathTimingFunction: Vivus.EASE_OUT,
-        dashGap: 3,
-        start: "autostart"
-      },
-      finish
-    );
+    const DURATION = 280;
+    const PAUSE = 120;
+    let raf: number;
+    let start = 0;
+    let activeIdx = 0;
+    let finished = false;
 
-    apiRef.current = {
-      replay: () => {
-        setDone(false);
-        setWriting(false);
-        replayRef.current?.classList.remove("show");
-        vivusRef.current?.reset();
-        vivusRef.current?.play(1, finish);
+    const lengths = Array.from(paths, (p) => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = `${len}`;
+      p.style.strokeDashoffset = `${len}`;
+      return len;
+    });
+
+    const tick = (t: number) => {
+      if (finished) return;
+      if (!start) start = t;
+
+      while (activeIdx < paths.length) {
+        const elapsed = t - start;
+        const needed = activeIdx * (DURATION + PAUSE);
+        if (elapsed < needed) break;
+
+        const letterElapsed = elapsed - needed;
+        const progress = Math.min(letterElapsed / DURATION, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        paths[activeIdx].style.strokeDashoffset = `${lengths[activeIdx] * (1 - ease)}`;
+
+        if (progress >= 1) {
+          activeIdx++;
+        } else {
+          break;
+        }
       }
+
+      if (activeIdx >= paths.length) {
+        finished = true;
+        setTimeout(() => {
+          setWriting(false);
+          setDone(true);
+          onDone();
+        }, 450);
+        return;
+      }
+
+      raf = requestAnimationFrame(tick);
     };
+
+    raf = requestAnimationFrame(tick);
 
     return () => {
-      vivusRef.current?.destroy();
+      finished = true;
+      cancelAnimationFrame(raf);
     };
   }, [onDone]);
 
+  const replay = () => {
+    setDone(false);
+    setWriting(false);
+    const paths = stageRef.current?.querySelectorAll<SVGPathElement>("path.letter");
+    if (!paths?.length) return;
+    paths.forEach((p) => {
+      const len = p.getTotalLength();
+      p.style.strokeDasharray = `${len}`;
+      p.style.strokeDashoffset = `${len}`;
+    });
+    setTimeout(() => {
+      setWriting(true);
+    }, 50);
+  };
+
   return (
     <>
-      <div id="preloader" className={`${writing ? "writing" : ""} ${done ? "done" : ""}`}>
-        {/*
-          Safe: handwriteSvg is a static asset imported via Vite ?raw at build time.
-          Never accept user-provided content here.
-        */}
-        <div id="stage" dangerouslySetInnerHTML={{ __html: handwriteSvg }} />
+      <div
+        id="preloader"
+        className={`${writing ? "writing" : ""} ${done ? "done" : ""}`}
+      >
+        <div id="stage" ref={stageRef} dangerouslySetInnerHTML={{ __html: handwriteSvg }} />
         <div className="caption">
           Loading<span className="dots" />
         </div>
       </div>
       <button
         id="replay"
-        ref={replayRef}
+        className={done ? "show" : ""}
         title="Replay the handwriting"
-        onClick={() => apiRef.current?.replay()}
+        onClick={replay}
       >
         Replay
       </button>
