@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bansheebbyy | Digital Agency</title>
+    <style>
+        /* ИМПОРТ ШРИФТОВ */
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap');
+
+        /* ПЕРЕМЕННЫЕ */
+        :root {
+            --matcha: #C2D8C4;
+            --dusty: #222222;
+            --dusty-dark: #1a1a1a; /* Чуть темнее для фона */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Space Grotesk', sans-serif;
+        }
+
+        body {
+            background-color: var(--dusty-dark);
+            color: #ffffff;
+            overflow: hidden; /* Скрываем скролл во время прелоадера */
+        }
+
+        /* ================= PRELOADER ================= */
+        .preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--dusty);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1), 
+                        opacity 0.8s ease;
+        }
+
+        .preloader.hide {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        .preloader-text {
+            font-size: 3rem;
+            font-weight: 700;
+            letter-spacing: -2px;
+            color: transparent;
+            -webkit-text-stroke: 1px var(--matcha);
+            position: relative;
+        }
+
+        .preloader-text::before {
+            content: "Bansheebbyy";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--matcha);
+            width: 0;
+            overflow: hidden;
+            animation: fillText 2.5s ease-in-out forwards;
+        }
+
+        .counter {
+            margin-top: 20px;
+            font-size: 1.2rem;
+            color: var(--matcha);
+            font-weight: 300;
+        }
+
+        @keyframes fillText {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        /* ================= MAIN CONTENT ================= */
+        .main-wrapper {
+            opacity: 0;
+            transform: scale(0.95) translateY(20px);
+            transition: opacity 1s ease 0.5s, transform 1.2s cubic-bezier(0.25, 1, 0.5, 1) 0.5s;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-wrapper.show {
+            opacity: 1;
+            transform: scale(1) translateY(0);
+        }
+
+        /* АБСТРАКТНЫЕ ФОРМЫ (BLOBS) НА ФОНЕ */
+        .blobs-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            filter: blur(60px);
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at center, var(--matcha) 0%, transparent 70%);
+            opacity: 0.4;
+            mix-blend-mode: screen;
+            animation: float 20s infinite alternate cubic-bezier(0.45, 0.05, 0.55, 0.95);
+        }
+
+        .blob-1 {
+            width: 600px;
+            height: 600px;
+            top: -10%;
+            left: 10%;
+            animation-duration: 18s;
+        }
+
+        .blob-2 {
+            width: 800px;
+            height: 800px;
+            bottom: -20%;
+            right: -10%;
+            background: radial-gradient(circle at center, #8fb593 0%, transparent 70%); /* Темный оттенок матчи для контраста */
+            animation-duration: 25s;
+            animation-direction: alternate-reverse;
+        }
+
+        .blob-3 {
+            width: 400px;
+            height: 400px;
+            top: 40%;
+            left: 40%;
+            opacity: 0.3;
+            animation-duration: 22s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1) rotate(0deg); border-radius: 40% 60% 70% 30% / 40% 40% 60% 50%; }
+            50% { transform: translate(100px, 50px) scale(1.2) rotate(90deg); border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%; }
+            100% { transform: translate(-50px, 150px) scale(0.9) rotate(180deg); border-radius: 100% 60% 60% 100% / 100% 100% 60% 60%; }
+        }
+
+        /* ================= HERO СЕКЦИЯ ================= */
+        header {
+            padding: 30px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 2;
+        }
+
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--matcha);
+        }
+
+        .hero {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            z-index: 2;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 10vw, 8rem);
+            line-height: 0.9;
+            font-weight: 700;
+            letter-spacing: -3px;
+            margin-bottom: 20px;
+        }
+
+        .hero h1 span {
+            color: var(--matcha);
+        }
+
+        .glass-box {
+            background: rgba(34, 34, 34, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(194, 216, 196, 0.2);
+            padding: 20px 40px;
+            border-radius: 50px;
+            display: inline-flex;
+            gap: 20px;
+            align-items: center;
+            margin-top: 40px;
+        }
+
+        .glass-box p {
+            font-size: 0.9rem;
+            color: #ccc;
+        }
+
+        .btn {
+            background: var(--matcha);
+            color: var(--dusty);
+            padding: 10px 25px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            box-shadow: 0 0 20px rgba(194, 216, 196, 0.5);
+            transform: translateY(-2px);
+        }
+
+        /* СТАТИСТИКА КАК НА СКРИНШОТЕ */
+        .stats {
+            position: absolute;
+            font-size: 0.85rem;
+            color: #aaa;
+            text-align: left;
+            max-width: 200px;
+        }
+
+        .stats.left {
+            top: 20%;
+            left: 10%;
+        }
+
+        .stats.right {
+            bottom: 30%;
+            right: 10%;
+            text-align: right;
+        }
+
+        .stats strong {
+            display: block;
+            font-size: 2rem;
+            color: var(--matcha);
+            margin-bottom: 5px;
+        }
+
+        /* ================= ПАРТНЕРЫ ================= */
+        .partners {
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            flex-wrap: wrap;
+            z-index: 2;
+            background: linear-gradient(to top, var(--dusty-dark), transparent);
+        }
+
+        .partners p {
+            font-weight: 700;
+            color: #666;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Адаптив */
+        @media (max-width: 768px) {
+            .stats { display: none; }
+            .glass-box { flex-direction: column; text-align: center; border-radius: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- PRELOADER -->
+    <div class="preloader">
+        <div class="preloader-text">Bansheebbyy</div>
+        <div class="counter">0%</div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main-wrapper">
+        
+        <!-- Animated Background Blobs -->
+        <div class="blobs-container">
+            <div class="blob blob-1"></div>
+            <div class="blob blob-2"></div>
+            <div class="blob blob-3"></div>
+        </div>
+
+        <header>
+            <div class="logo">Bansheebbyy.</div>
+        </header>
+
+        <section class="hero">
+            
+            <div class="stats left">
+                <strong>+1.5b</strong>
+                data elements processed with utmost care.
+            </div>
+
+            <h1>digital<br><span>agency</span></h1>
+            
+            <div class="glass-box">
+                <p>Verify you're ready for the future</p>
+                <a href="#" class="btn">Try Demo</a>
+            </div>
+
+            <div class="stats right">
+                <strong>+300k</strong>
+                successful projects launched globally.
+            </div>
+
+        </section>
+
+        <!-- Partners (как на скриншоте внизу) -->
+        <section class="partners">
+            <p>Auth</p>
+            <p>Unity</p>
+            <p>Western Union</p>
+            <p>Dropbox</p>
+        </section>
+
+    </div>
+
+    <!-- JAVASCRIPT ДЛЯ ПРЕЛОАДЕРА -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let progress = 0;
+            const counterElement = document.querySelector(".counter");
+            const preloader = document.querySelector(".preloader");
+            const mainWrapper = document.querySelector(".main-wrapper");
+
+            // Имитация загрузки
+            const loadingInterval = setInterval(() => {
+                // Случайный шаг загрузки для реалистичности
+                progress += Math.floor(Math.random() * 15) + 1; 
+
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(loadingInterval);
+                    
+                    // Запускаем переход после достижения 100%
+                    setTimeout(() => {
+                        preloader.classList.add("hide");
+                        mainWrapper.classList.add("show");
+                        document.body.style.overflow = "auto"; // Возвращаем скролл
+                    }, 400); // Небольшая задержка на 100%
+                }
+
+                counterElement.innerText = progress + "%";
+            }, 120);
+        });
+    </script>
+</body>
+</html>

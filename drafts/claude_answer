@@ -1,0 +1,203 @@
+# Design System Extraction: Atomic Heart / Mundfish Style
+
+## Color Palette
+
+```css
+:root {
+  /* Base Colors */
+  --color-bg-primary: #FFFFFF;
+  --color-bg-secondary: #F5F5F3;
+  --color-bg-dark: #1A1A1A;
+  --color-bg-darker: #0D0D0D;
+  
+  /* Text Colors */
+  --color-text-primary: #0A0A0A;
+  --color-text-secondary: #6B6B6B;
+  --color-text-tertiary: #A0A0A0;
+  --color-text-inverse: #FFFFFF;
+  --color-text-muted: #C4C4C4;
+  
+  /* Accent Colors */
+  --color-accent-copper: #B8895A;
+  --color-accent-copper-light: #D4A574;
+  --color-accent-black: #000000;
+  
+  /* UI/Border Colors */
+  --color-border-light: #E0E0E0;
+  --color-border-medium: #D1D1D1;
+  --color-border-dark: #2A2A2A;
+  
+  /* Glass/Overlay */
+  --color-glass-white: rgba(255, 255, 255, 0.7);
+  --color-glass-overlay: rgba(0, 0, 0, 0.03);
+  --color-shadow-soft: rgba(0, 0, 0, 0.08);
+}
+```
+
+## Typography
+
+```css
+:root {
+  /* Font Families */
+  --font-display: 'Neue Machina', 'Druk Wide', 'Helvetica Neue', sans-serif;
+  --font-body: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: 'Space Mono', 'Courier New', monospace;
+  
+  /* Font Sizes */
+  --text-hero: clamp(4rem, 12vw, 9rem);      /* POLYMER */
+  --text-xl: 2rem;                            /* 32px */
+  --text-lg: 1.25rem;                         /* 20px */
+  --text-base: 0.875rem;                      /* 14px */
+  --text-sm: 0.75rem;                         /* 12px */
+  --text-xs: 0.625rem;                        /* 10px - nav labels */
+  
+  /* Font Weights */
+  --weight-black: 900;
+  --weight-bold: 700;
+  --weight-medium: 500;
+  --weight-regular: 400;
+  
+  /* Letter Spacing */
+  --tracking-tight: -0.02em;    /* Hero display */
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;      /* Nav items */
+  --tracking-wider: 0.15em;     /* Small labels */
+  
+  /* Line Heights */
+  --leading-tight: 0.9;         /* Display headlines */
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.7;
+}
+```
+
+## Spacing & Grid System
+
+```css
+:root {
+  /* Base Unit: 8px */
+  --space-1: 0.5rem;    /* 8px */
+  --space-2: 1rem;      /* 16px */
+  --space-3: 1.5rem;    /* 24px */
+  --space-4: 2rem;      /* 32px */
+  --space-5: 3rem;      /* 48px */
+  --space-6: 4rem;      /* 64px */
+  --space-7: 6rem;      /* 96px */
+  --space-8: 8rem;      /* 128px */
+  
+  /* Container */
+  --container-max: 1440px;
+  --container-padding: 2rem;
+  
+  /* Grid */
+  --grid-columns: 12;
+  --grid-gap: 1.5rem;
+  
+  /* Layout Zones */
+  --header-height: 80px;
+  --sidebar-width: 240px;
+  --nav-item-gap: 1.5rem;
+}
+```
+
+## Glass/UI Element Styles
+
+```css
+:root {
+  /* Border Radius */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+  
+  /* Glass Panel Effect */
+  --glass-blur: blur(12px);
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: 1px solid rgba(255, 255, 255, 0.3);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.06);
+  
+  /* Beveled/Angular UI (hexagon nav elements) */
+  --clip-hexagon: polygon(10% 0%, 90% 0%, 100% 50%, 90% 100%, 10% 100%, 0% 50%);
+  
+  /* Divider Lines */
+  --divider-thin: 1px solid var(--color-border-light);
+  --divider-medium: 2px solid var(--color-text-primary);
+  
+  /* Transitions */
+  --transition-fast: 0.2s ease;
+  --transition-base: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Z-index layers */
+  --z-background: 0;
+  --z-content: 10;
+  --z-ui-overlay: 20;
+  --z-nav: 30;
+  --z-modal: 40;
+}
+```
+
+## Component Patterns
+
+```css
+/* Hero Typography Style */
+.hero-title {
+  font-family: var(--font-display);
+  font-size: var(--text-hero);
+  font-weight: var(--weight-black);
+  letter-spacing: var(--tracking-tight);
+  line-height: var(--leading-tight);
+  text-transform: uppercase;
+  color: var(--color-text-primary);
+}
+
+/* Small Nav Labels (sidebar) */
+.nav-label {
+  font-family: var(--font-body);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+/* Floating UI Badge (04%) */
+.ui-badge {
+  background: var(--color-bg-dark);
+  color: var(--color-text-inverse);
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+}
+
+/* Thumbnail/Video Preview Card */
+.media-card {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--glass-shadow);
+  aspect-ratio: 16/9;
+}
+
+/* Corner Bracket Decoration (tech UI accent) */
+.corner-bracket {
+  position: relative;
+  border: 1px solid var(--color-border-medium);
+}
+.corner-bracket::before {
+  content: '';
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  border-top: 2px solid var(--color-text-primary);
+  border-left: 2px solid var(--color-text-primary);
+  top: -1px;
+  left: -1px;
+}
+```
+
+## Key Design Notes
+- **Contrast-driven**: Pure white backgrounds with near-black text creates high-contrast editorial feel
+- **Industrial/Tech accents**: Hexagonal clip-paths, corner brackets, thin dividers mimic HUD/sci-fi interfaces
+- **Asymmetric grid**: Content scattered at edges with generous whitespace in center for hero visual
+- **Monospace for data**: Percentages, coordinates, technical labels use mono font
+- **Copper/bronze accent**: Sparingly used on 3D object base, ties to Atomic Heart's Soviet-retrofuturism theme

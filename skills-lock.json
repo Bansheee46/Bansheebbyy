@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "youtube-fetcher": {
+      "source": "JimmySadek/youtube-fetcher-to-markdown",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "8a6ed60eb8a7d2559b04c1bea904d5bd460c3a3f5eb5596e4fe5740096eba1bc"
+    }
+  }
+}

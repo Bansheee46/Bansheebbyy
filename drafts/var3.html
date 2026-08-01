@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>macOS Style Preloader</title>
+    <style>
+        /* CSS RESET & VARIABLES */
+        :root {
+            --bg-dark: #070708;
+            --text-primary: #ffffff;
+            --font-serif: "New York", "Georgia", "Times New Roman", serif;
+            --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            overflow: hidden; /* Lock scrolling during loading */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* PRELOADER CONTAINER */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--bg-dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            /* Smooth slide-up transition to reveal content */
+            transition: transform 1s cubic-bezier(0.16, 1, 0.3, 1), 
+                        opacity 1s cubic-bezier(0.16, 1, 0.3, 1);
+            overflow: hidden;
+        }
+
+        /* AMBIENT MAC-STYLE GLOWS */
+        .glow-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(140px);
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .glow-1 {
+            width: 50vw;
+            height: 50vw;
+            background: radial-gradient(circle, rgba(147, 51, 234, 0.2) 0%, rgba(0, 0, 0, 0) 70%);
+            top: -10%;
+            left: -10%;
+            animation: floatGlow 18s infinite alternate ease-in-out;
+        }
+
+        .glow-2 {
+            width: 60vw;
+            height: 60vw;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, rgba(0, 0, 0, 0) 70%);
+            bottom: -20%;
+            right: -10%;
+            animation: floatGlow 22s infinite alternate-reverse ease-in-out;
+        }
+
+        @keyframes floatGlow {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(8%, 5%) scale(1.1); }
+        }
+
+        /* WELCOME TYPOGRAPHY */
+        .welcome-wrapper {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .welcome-text {
+            /* macOS serif style for greetings */
+            font-family: var(--font-serif);
+            font-size: 3.5rem;
+            font-weight: 300;
+            font-style: italic;
+            letter-spacing: -0.03em;
+            color: var(--text-primary);
+            
+            /* Initial state: hidden and blurred */
+            opacity: 0;
+            transform: translateY(12px) scale(0.98);
+            filter: blur(8px);
+            
+            /* Apple-like fluid transitions */
+            transition: opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                        transform 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                        filter 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+                        letter-spacing 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+            display: inline-block;
+        }
+
+        /* State: active transition in */
+        .welcome-text.fade-in {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            filter: blur(0);
+            letter-spacing: 0.02em;
+        }
+
+        /* State: transitioning out */
+        .welcome-text.fade-out {
+            opacity: 0;
+            transform: translateY(-8px) scale(1.01);
+            filter: blur(6px);
+            letter-spacing: 0.04em;
+        }
+
+        /* HIDE PRELOADER ACTION */
+        .preloader-hidden {
+            transform: translateY(-100%);
+            pointer-events: none;
+        }
+
+        /* DEMO WEBSITE CONTENT */
+        #main-content {
+            opacity: 0;
+            transition: opacity 1.2s ease-out;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        #main-content h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            letter-spacing: -0.01em;
+            margin-bottom: 12px;
+        }
+
+        #main-content p {
+            color: #8e8e93;
+            font-size: 1rem;
+            max-width: 400px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader Overlay -->
+    <div id="preloader">
+        <div class="glow-orb glow-1"></div>
+        <div class="glow-orb glow-2"></div>
+        <div class="welcome-wrapper">
+            <span class="welcome-text" id="welcome-text"></span>
+        </div>
+    </div>
+
+    <!-- Main Website Content (Hidden initially) -->
+    <main id="main-content">
+        <h1>Welcome to the Site</h1>
+        <p>A minimalist design space built with clean aesthetics, smooth interaction, and dynamic layouts.</p>
+    </main>
+
+    <script>
+        // Array of macOS style international greetings
+        const greetings = [
+            "hello",     // English
+            "bonjour",   // French
+            "hola",      // Spanish
+            "ciao",      // Italian
+            "hallo",     // German
+            "hej",       // Swedish
+            "welcome"    // final prompt
+        ];
+
+        const textElement = document.getElementById('welcome-text');
+        const preloader = document.getElementById('preloader');
+        const mainContent = document.getElementById('main-content');
+
+        // Helper timeout function inside async loop
+        const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+        async function animatePreloader() {
+            for (let i = 0; i < greetings.length; i++) {
+                textElement.textContent = greetings[i];
+                
+                // Trigger reflow to restart transition
+                textElement.classList.remove('fade-out');
+                textElement.classList.add('fade-in');
+                
+                // Time the word remains fully visible
+                await delay(450);
+                
+                // Fade out before switching to the next greeting
+                if (i < greetings.length - 1) {
+                    textElement.classList.remove('fade-in');
+                    textElement.classList.add('fade-out');
+                    await delay(200); // match transition speed
+                }
+            }
+
+            // Final text fade-out
+            textElement.classList.remove('fade-in');
+            textElement.classList.add('fade-out');
+            await delay(400);
+
+            // Slide up the preloader screen
+            preloader.classList.add('preloader-hidden');
+            
+            // Unlock scrolling
+            document.body.style.overflow = 'auto';
+
+            // Reveal the actual content smoothly
+            mainContent.classList.add('visible');
+        }
+
+        // Initialize animation once DOM is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            animatePreloader();
+        });
+    </script>
+</body>
+</html>
